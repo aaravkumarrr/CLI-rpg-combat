@@ -1,61 +1,58 @@
-from character import Character
+import character
 import random
 
-class Player(Character):
-    def __init__(self, name, health, max_health, attack_power):
-        super().__init__(name, health, max_health, attack_power)
-
-class Warrior(Player):
+class Warrior(character.Character):
     def __init__(self, name):
-        self.name = name
+        self.max_health = 120
         self.health = 120
         self.attack_power = 15
-
-        def special_ability(target):
-            print(f"{self.name} used Shield Bash!")
-            target.take_damage(1.5*self.attack_power)
-        
-        def attack(target):
-            print(self.name, " attacked ", target.name, " and dealt ", self.attack_power, " damage.")
-
-class Mage(Player):
-    ability_used = False
+        super().__init__(name, self.health, self.max_health, self.attack_power)
     
+    def attack(self, target):
+        print(f"{self.name} attacked {target.name}")
+        target.take_damage(self.attack_power)
+    
+    def special_ability(self, target):
+        print(f"{self.name} used Shield Bash on {target.name}")
+        target.take_damage(self.attack_power * 1.5)
+
+class Mage(character.Character):
     def __init__(self, name):
-        self.name = name
+        self.max_health = 70
         self.health = 70
         self.attack_power = 25
-
-    def special_ability(self, target):
-        if not self.ability_used:
-            print(f"{self.name} used Fireball!")
-            target.take_damage(self.attack_power * 4)
-            ability_used = True
+        self.fireball_used = False
+        super().__init__(name, self.health, self.max_health, self.attack_power)
     
     def attack(self, target):
+        print(f"{self.name} attacked {target.name}")
         target.take_damage(self.attack_power)
-        print(self.name, " attacked ", target.name, " and dealt ", self.attack_power, " damage.")
-        
+    
+    def special_ability(self, target):
+        if not self.fireball_used:
+            print(f"{self.name} used Fireball on {target.name}")
+            target.take_damage(self.attack_power * 2)
+            self.fireball_used = True
+        else:
+            print("Fireball has been used already.")
 
-class Rogue(Player):
-
+class Rogue(character.Character):
     def __init__(self, name):
-        self.name = name
+        self.max_health = 70
         self.health = 90
         self.attack_power = 18
+        super().__init__(name, self.health, self.max_health, self.attack_power)
+    
+    def attack(self, target):
+        print(f"{self.name} attacked {target.name}")
+        target.take_damage(self.attack_power)
     
     def special_ability(self, target):
-
-        print(f"{self.name} used Critical Strike!")
-        def damage():
-            chance = random.randint(0,10)
-            if chance <=4:
-                return 3*self.attack_power
-            else:
-                return self.attack_power
-        target.take_damage(damage())
-
-    def attack(self, target):
-        target.take_damage(self.attack_power)
-        print(self.name, " attacked ", target.name, " and dealt ", self.attack_power, " damage.")
-    
+        print(f"{self.name} used Critical Strike on {target.name}")
+        chance = random.randint(1,10)
+        if chance <= 4:
+            print(f"It worked!")
+            target.take_damage(self.attack_power * 3)
+        else:
+            print("It failed!")
+            target.take_damage(self.attack_power)
